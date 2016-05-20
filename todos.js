@@ -1,7 +1,3 @@
-import { Template } from 'meteor/templating';
-import { ReactiveVar } from 'meteor/reactive-var';
-
-
 Todos = new Mongo.Collection('todos');
 Lists = new Meteor.Collection('lists');
 
@@ -58,7 +54,7 @@ if(Meteor.isClient){
     // client code goes here
     Template.todos.helpers({
       'todo': function(){
-        var currentList = this._id
+        var currentList = this._id;
         var currentUser = Meteor.userId();
         return Todos.find({listId: currentList,createdBy: currentUser},{sort: {createdAt: -1}});
       }
@@ -254,7 +250,7 @@ if(Meteor.isClient){
 
     Template.lists.onCreated(function(){
       this.subscribe('lists');
-    })
+    });
 }
 
 if(Meteor.isServer){
@@ -264,14 +260,14 @@ if(Meteor.isServer){
   });
   Meteor.publish('todos', function(currentList){
     var currentUser = this.userId;
-    return Todos.find({ createdBy: currentUser , listId: currentList})
+    return Todos.find({ createdBy: currentUser , listId: currentList});
   });
 
   Meteor.methods({
     'createNewList': function(listName){
       var currentUser = Meteor.userId();
       check(listName,String);
-      if(listName == ""){
+      if(listName === ""){
         listName = defaultName(currentUser);
       }
       var data = ({
@@ -286,7 +282,7 @@ if(Meteor.isServer){
     'createListItem': function(itemName,listId){
       var currentUser = Meteor.userId();
       check(itemName,String);
-      if(itemName == ""){
+      if(itemName === ""){
         itemName = defaultNameItem(currentUser,listId);
       }
       var data = ({
@@ -309,7 +305,7 @@ if(Meteor.isServer){
     'updateListItem': function(documentID,itemName){
       var currentUser = Meteor.userId();
       check(itemName,String);
-      if(itemName == ""){
+      if(itemName === ""){
         itemName = "Undefined";
       }
 
@@ -349,7 +345,7 @@ if(Meteor.isServer){
   });
 
   function defaultName(currentUser) {
-    var nextLetter = 'A'
+    var nextLetter = 'A';
     var nextName = 'List ' + nextLetter;
     while (Lists.findOne({ name: nextName, createdBy: currentUser })) {
         nextLetter = String.fromCharCode(nextLetter.charCodeAt(0) + 1);
@@ -359,7 +355,7 @@ if(Meteor.isServer){
   }
 
   function defaultNameItem(currentUser,listId) {
-    var nextLetter = 'A'
+    var nextLetter = 'A';
     var nextName = 'Todo ' + nextLetter;
     while (Todos.findOne({ name: nextName, createdBy: currentUser, listId: listId })) {
         nextLetter = String.fromCharCode(nextLetter.charCodeAt(0) + 1);
